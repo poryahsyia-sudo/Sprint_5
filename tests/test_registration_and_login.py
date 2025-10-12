@@ -10,14 +10,10 @@ from pages.locators import (
 
 def test_successful_registration(driver):
     driver.get("https://stellarburgers.education-services.ru/")
-    time.sleep(1)
 
     # Переход на страницу регистрации
     driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
-    time.sleep(1)
-    # На форме входа может быть ссылка "Зарегистрироваться"
-    driver.find_element(*RegistrationPageLocators.LOGIN_BUTTON_ON_REG_FORM)  # убедимся, что элемент есть
-    driver.find_element(*RegistrationPageLocators.LOGIN_BUTTON_ON_REG_FORM).click()  # если это ссылка "Войти" на форме регистрации, можно убрать
+    driver.find_element("link text", "Зарегистрироваться").click()
 
     # Заполнение формы
     email = generate_email()
@@ -28,16 +24,17 @@ def test_successful_registration(driver):
 
     # Отправка формы
     driver.find_element(*RegistrationPageLocators.REGISTER_BUTTON).click()
-    time.sleep(2)
+    time.sleep(3)
 
-    # Попытка войти с только что зарегистрированным пользователем
+    # Вход с только что зарегистрированным пользователем
     driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(email)
     driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(password)
     driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-    time.sleep(2)
+    time.sleep(3)
 
     # Проверка успешного входа по кнопке "Оформить заказ"
     assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
+    
 
 def test_login_from_main_page(driver, valid_user):
     driver.get("https://stellarburgers.education-services.ru/")
