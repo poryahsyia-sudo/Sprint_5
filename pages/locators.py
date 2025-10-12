@@ -43,10 +43,9 @@ class LoginPageLocators:
 
 
 class AccountPageLocators:
-    ACCOUNT_BUTTON = ("xpath", '//*[@id="root"]/div/header/nav/a')  # ссылка на Личный кабинет
-    LOGOUT_BUTTON = ("xpath", '//*[@id="root"]/div/main/div/nav/ul/li[3]/button')  # Выход
-    PROFILE_BUTTON = ("xpath", '//*[@id="root"]/div/main/div/nav/ul/li[1]/a')  # Кнопка "Профиль"
-
+    ACCOUNT_BUTTON = (By.XPATH, '//*[@id="root"]/div/header/nav/a')
+    LOGOUT_BUTTON = (By.XPATH, '//*[@id="root"]/div/main/div/nav/ul/li[3]/button')
+    PROFILE_BUTTON = (By.XPATH, '//*[@id="root"]/div/main/div/nav/ul/li[1]/a')
 
 class PasswordRecoveryPageLocators:
     LOGIN_BUTTON_ON_RECOVER_FORM = (By.XPATH, ".//a[text()='Войти']")  # Кнопка "Войти" на форме восстановления пароля
