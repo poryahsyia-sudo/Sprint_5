@@ -31,7 +31,7 @@ class ConstructorPageLocators:
 class IngredientsLocators:
     BUN_R2D3 = (By.XPATH, "//p[text()='Флюоресцентная булка R2-D3']/ancestor::a")
     SAUCE_SPICY_X = (By.XPATH, "//p[text()='Соус Spicy-X']")
-    ILLING_MEAT = (By.XPATH, "//p[text()='Мясная начинка']/ancestor::a")
+    FILLING_MEAT = (By.XPATH, "//p[text()='Мясная начинка']/ancestor::a")
 
 
 class LoginPageLocators:
