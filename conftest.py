@@ -2,8 +2,9 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from data.users import VALID_USER, INVALID_PASSWORD
 
-# ✅ 1. Убираем локальный путь, используем webdriver_manager (универсально для всех)
+
 @pytest.fixture
 def driver():
     service = Service(ChromeDriverManager().install())
@@ -13,13 +14,11 @@ def driver():
     driver.quit()
 
 
-# ✅ 2. Статичные данные выносим в константы (не фикстуры)
-VALID_USER = {
-    "email": "anastassiya_makiyenko_32_991@gmail.com",
-    "password": "zxc123"
-}
+@pytest.fixture
+def valid_user():
+    return VALID_USER
 
-INVALID_PASSWORD = {
-    "email": "anastassiya_makiyenko_32_991@gmail.com",
-    "password": "wrongpass"
-}
+
+@pytest.fixture
+def invalid_password():
+    return INVALID_PASSWORD
