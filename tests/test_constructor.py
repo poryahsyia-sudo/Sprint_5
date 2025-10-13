@@ -1,23 +1,41 @@
-import time
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.locators import ConstructorPageLocators, IngredientsLocators
+from data.urls import BASE_URL
 
-def test_tabs_navigation(driver):
-    # 1. Открываем главную страницу
-    driver.get("https://stellarburgers.education-services.ru/")
-    time.sleep(2)
 
-    # 2. Переход на вкладку "Начинки" и проверка
+def test_fillings_tab(driver):
+    driver.get(BASE_URL)
     driver.find_element(*ConstructorPageLocators.FILLINGS_TAB).click()
-    time.sleep(1)
-    assert driver.find_element(*IngredientsLocators.FILLING_MEAT).is_displayed()
 
-    # 3. Переход на вкладку "Соусы" и проверка
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.FILLING_MEAT)
+    )
+
+    fillings_tab = driver.find_element(*ConstructorPageLocators.FILLINGS_TAB)
+    assert "tab_tab_type_current" in fillings_tab.get_attribute("class")
+
+
+def test_sauces_tab(driver):
+    driver.get(BASE_URL)
     driver.find_element(*ConstructorPageLocators.SAUCES_TAB).click()
-    time.sleep(1)
-    assert driver.find_element(*IngredientsLocators.SAUCE_SPICY_X).is_displayed()
 
-    # 4. Переход на вкладку "Булки" и проверка
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.SAUCE_SPICY_X)
+    )
+
+    sauces_tab = driver.find_element(*ConstructorPageLocators.SAUCES_TAB)
+    assert "tab_tab_type_current" in sauces_tab.get_attribute("class")
+
+
+def test_buns_tab(driver):
+    driver.get(BASE_URL)
     driver.find_element(*ConstructorPageLocators.BUNS_TAB).click()
-    time.sleep(1)
-    assert driver.find_element(*IngredientsLocators.BUN_R2D3).is_displayed()
+
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.BUN_R2D3)
+    )
+
+    buns_tab = driver.find_element(*ConstructorPageLocators.BUNS_TAB)
+    assert "tab_tab_type_current" in buns_tab.get_attribute("class")
