@@ -22,9 +22,9 @@ class ProfilePageLocators:
 
 
 class ConstructorPageLocators:
-    BUNS_TAB = (By.XPATH, "//div[contains(@class, 'tab_tab__')][.//span[text()='Булки']]")
-    SAUCES_TAB = (By.XPATH, "//div[contains(@class, 'tab_tab__')][.//span[text()='Соусы']]")
-    FILLINGS_TAB = (By.XPATH, "//div[contains(@class, 'tab_tab__')][.//span[text()='Начинки']]")
+    BUNS_TAB = (By.XPATH, "//span[text()='Булки']")
+    SAUCES_TAB = (By.XPATH, "//main//span[text()='Соусы']")
+    FFILLINGS_TAB = (By.XPATH, "//*[@id='root']//span[text()='Начинки']")
     ACTIVE_SECTION_TITLE = (By.XPATH, "//div[contains(@class, 'tab_tab_type_current')]//span")  # Активная вкладка
 
 
