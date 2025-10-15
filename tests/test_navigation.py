@@ -1,106 +1,73 @@
-import time
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.locators import (
     MainPageLocators,
     LoginPageLocators,
     AccountPageLocators,
-    ConstructorPageLocators,
 )
 from utils.generator import generate_email, generate_password
 
-def test_login_and_go_to_account(driver, valid_user):
-    # Открываем главную страницу
-    driver.get("https://stellarburgers.education-services.ru/")
-    time.sleep(1)
 
-    # Нажимаем кнопку "Личный кабинет"
-    driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-    time.sleep(1)
+@pytest.mark.usefixtures("driver", "valid_user")
+class TestLoginFlow:
 
-    # Вводим email и пароль
-    driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
-    driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+    def wait(self, driver, locator):
+        """Ожидает, пока элемент станет видимым"""
+        return WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(locator)
+        )
 
-    # Нажимаем кнопку "Войти"
-    driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-    time.sleep(2)
+    def test_login_opens_account(self, driver, valid_user):
+        driver.get("https://stellarburgers.education-services.ru/")
+        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
 
-    # Нажимаем снова "Личный кабинет" (переход в профиль)
-    driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-    time.sleep(2)
+        self.wait(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
 
-    # Проверяем, что видна кнопка "Профиль" в ЛК (переход успешен)
-    profile_button = driver.find_element(*AccountPageLocators.PROFILE_BUTTON)
-    assert profile_button.is_displayed()
+        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
 
-def test_login_and_go_to_constructor(driver, valid_user):
-    # 1. Открываем главную страницу
-    driver.get("https://stellarburgers.education-services.ru/")
-    time.sleep(1)
+    def test_constructor_button_returns_home(self, driver, valid_user):
+        driver.get("https://stellarburgers.education-services.ru/")
+        driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
 
-    # 2. Нажимаем кнопку "Войти в аккаунт"
-    driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
-    time.sleep(1)
+        self.wait(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
 
-    # Вводим данные пользователя и входим
-    driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
-    driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
-    driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-    time.sleep(2)
+        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
 
-    # 3. Переход в личный кабинет
-    driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-    time.sleep(2)
-    assert driver.find_element(*AccountPageLocators.PROFILE_BUTTON).is_displayed()
+        driver.find_element(*MainPageLocators.CONSTRUCTOR_BUTTON).click()
+        assert self.wait(driver, LoginPageLocators.ORDER_BUTTON).is_displayed()
 
-    # 4. Переход в Конструктор через кнопку
-    driver.find_element(*MainPageLocators.CONSTRUCTOR_BUTTON).click()
-    time.sleep(2)
+    def test_logo_redirects_to_home(self, driver, valid_user):
+        driver.get("https://stellarburgers.education-services.ru/")
+        driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
 
-    # 5. Проверка, что кнопка "Оформить заказ" видна на странице конструктора
-    assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
+        self.wait(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
 
-def test_login_and_go_to_home_via_stellar_logo(driver, valid_user):
-    # 1. Открываем главную страницу
-    driver.get("https://stellarburgers.education-services.ru/")
-    time.sleep(1)
+        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
 
-    # 2. Входим через "Войти в аккаунт"
-    driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
-    driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
-    driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
-    driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-    time.sleep(2)
+        driver.find_element(*MainPageLocators.LOGO_BUTTON).click()
+        assert self.wait(driver, LoginPageLocators.ORDER_BUTTON).is_displayed()
 
-    # 3. Переходим в Личный кабинет
-    driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-    time.sleep(2)
-    assert driver.find_element(*AccountPageLocators.PROFILE_BUTTON).is_displayed()
+    def test_logout_redirects_to_login(self, driver, valid_user):
+        driver.get("https://stellarburgers.education-services.ru/")
+        driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
 
-    # 4. Кликаем по логотипу Stellar Burgers — должен перейти на главную
-    driver.find_element(*MainPageLocators.LOGO_BUTTON).click()
-    time.sleep(2)
+        self.wait(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
 
-    # 5. Проверяем, что кнопка "Оформить заказ" видна на главной
-    assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
+        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
 
-def test_logout_from_account(driver, valid_user):
-    # 1. Открываем главную страницу и входим
-    driver.get("https://stellarburgers.education-services.ru/")
-    driver.find_element(*MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
-    driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
-    driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
-    driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-    time.sleep(2)
-
-    # 2. Переходим в Личный кабинет
-    driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-    time.sleep(2)
-    assert driver.find_element(*AccountPageLocators.PROFILE_BUTTON).is_displayed()
-
-    # 3. Нажимаем кнопку "Выйти"
-    driver.find_element(*AccountPageLocators.LOGOUT_BUTTON).click()
-    time.sleep(2)
-
-    # 4. Проверяем, что произошёл редирект на страницу логина
-    assert "login" in driver.current_url
+        driver.find_element(*AccountPageLocators.LOGOUT_BUTTON).click()
+        WebDriverWait(driver, 10).until(EC.url_contains("login"))
+        assert "login" in driver.current_url
