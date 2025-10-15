@@ -29,7 +29,7 @@ class TestConstructorTabs:
         WebDriverWait(driver, 5).until(
             EC.visibility_of_element_located(IngredientsLocators.FILLING_MEAT)
         )
-        assert self.is_tab_active(driver, ConstructorPageLocators.FILLINGS_TAB), \
+        assert self.is_tab_active(driver, ConstructorPageLocators.FILLINGS_TAB)
 
     def test_sauces_tab(self, driver):
         self.open_page(driver)
@@ -37,7 +37,7 @@ class TestConstructorTabs:
         WebDriverWait(driver, 5).until(
             EC.visibility_of_element_located(IngredientsLocators.SAUCE_SPICY_X)
         )
-        assert self.is_tab_active(driver, ConstructorPageLocators.SAUCES_TAB), \
+        assert self.is_tab_active(driver, ConstructorPageLocators.SAUCES_TAB)
 
     def test_buns_tab(self, driver):
         self.open_page(driver)
@@ -45,4 +45,4 @@ class TestConstructorTabs:
         WebDriverWait(driver, 5).until(
             EC.visibility_of_element_located(IngredientsLocators.BUN_R2D3)
         )
-        assert self.is_tab_active(driver, ConstructorPageLocators.BUNS_TAB), \
+        assert self.is_tab_active(driver, ConstructorPageLocators.BUNS_TAB)
