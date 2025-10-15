@@ -22,11 +22,10 @@ class ProfilePageLocators:
 
 
 class ConstructorPageLocators:
-    BUNS_TAB = (By.XPATH, "//span[text()='Булки']")
-    SAUCES_TAB = (By.XPATH, "//main//span[text()='Соусы']")
-    FFILLINGS_TAB = (By.XPATH, "//*[@id='root']//span[text()='Начинки']")
+    BUNS_TAB = (By.XPATH, "//span[text()='Булки']")  # Вкладка "Булки"
+    SAUCES_TAB = (By.XPATH, "//span[text()='Соусы']")  # Вкладка "Соусы"
+    FILLINGS_TAB = (By.XPATH, "//span[text()='Начинки']")  # Вкладка "Начинки"
     ACTIVE_SECTION_TITLE = (By.XPATH, "//div[contains(@class, 'tab_tab_type_current')]//span")  # Активная вкладка
-
 
 class IngredientsLocators:
     BUN_R2D3 = (By.XPATH, "//p[text()='Флюоресцентная булка R2-D3']/ancestor::a")
