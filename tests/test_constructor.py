@@ -4,23 +4,33 @@ from selenium.webdriver.support import expected_conditions as EC
 from pages.locators import ConstructorPageLocators, IngredientsLocators
 from data.urls import BASE_URL  # ✅ возвращено как у тебя
 
-
-@pytest.mark.parametrize("tab_locator,ingredient_locator", [
-    (ConstructorPageLocators.FILLINGS_TAB, IngredientsLocators.FILLING_MEAT),
-    (ConstructorPageLocators.SAUCES_TAB, IngredientsLocators.SAUCE_SPICY_X),
-    (ConstructorPageLocators.BUNS_TAB, IngredientsLocators.BUN_R2D3),
-])
-def test_tabs_navigation(driver, tab_locator, ingredient_locator):
+def test_fillings_tab(driver):
     driver.get(BASE_URL)
-    wait = WebDriverWait(driver, 10)
+    driver.find_element(*ConstructorPageLocators.FILLINGS_TAB).click()
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.FILLING_MEAT)
+    )
+    fillings_tab = driver.find_element(*ConstructorPageLocators.FILLINGS_TAB)
+    assert "tab_tab_type_current" in fillings_tab.get_attribute("class")
 
-    # 🔹 Ожидаем, что вкладка кликабельна
-    tab = wait.until(EC.element_to_be_clickable(tab_locator))
-    tab.click()
 
-    # 🔹 Ждём, пока вкладка станет активной
-    wait.until(lambda d: "tab_tab_type_current" in tab.get_attribute("class"))
+def test_sauces_tab(driver):
+    driver.get(BASE_URL)
+    driver.find_element(*ConstructorPageLocators.SAUCES_TAB).click()
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.SAUCE_SPICY_X)
+    )
+    sauces_tab = driver.find_element(*ConstructorPageLocators.SAUCES_TAB)
+    assert "tab_tab_type_current" in sauces_tab.get_attribute("class")
 
-    # 🔹 Проверяем, что появился ингредиент
-    wait.until(EC.visibility_of_element_located(ingredient_locator))
-    assert driver.find_element(*ingredient_locator).is_displayed()
+
+def test_buns_tab(driver):
+    driver.get(BASE_URL)
+    WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable(ConstructorPageLocators.BUNS_TAB)
+    ).click()
+    WebDriverWait(driver, 5).until(
+        EC.visibility_of_element_located(IngredientsLocators.BUN_R2D3)
+    )
+    buns_tab = driver.find_element(*ConstructorPageLocators.BUNS_TAB)
+    assert "tab_tab_type_current" in buns_tab.get_attribute("class")
