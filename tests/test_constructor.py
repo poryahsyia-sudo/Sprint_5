@@ -1,36 +1,48 @@
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from data.urls import BASE_URL
 from pages.locators import ConstructorPageLocators, IngredientsLocators
-from data.urls import BASE_URL  # ✅ возвращено как у тебя
-
-def test_fillings_tab(driver):
-    driver.get(BASE_URL)
-    driver.find_element(*ConstructorPageLocators.FILLINGS_TAB).click()
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(IngredientsLocators.FILLING_MEAT)
-    )
-    fillings_tab = driver.find_element(*ConstructorPageLocators.FILLINGS_TAB)
-    assert "tab_tab_type_current" in fillings_tab.get_attribute("class")
 
 
-def test_sauces_tab(driver):
-    driver.get(BASE_URL)
-    driver.find_element(*ConstructorPageLocators.SAUCES_TAB).click()
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(IngredientsLocators.SAUCE_SPICY_X)
-    )
-    sauces_tab = driver.find_element(*ConstructorPageLocators.SAUCES_TAB)
-    assert "tab_tab_type_current" in sauces_tab.get_attribute("class")
+@pytest.mark.usefixtures("driver")
+class TestConstructorTabs:
 
+    def open_page(self, driver):
+        driver.get(BASE_URL)
+        WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(ConstructorPageLocators.BUNS_TAB)
+        )
 
-def test_buns_tab(driver):
-    driver.get(BASE_URL)
-    WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable(ConstructorPageLocators.BUNS_TAB)
-    ).click()
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(IngredientsLocators.BUN_R2D3)
-    )
-    buns_tab = driver.find_element(*ConstructorPageLocators.BUNS_TAB)
-    assert "tab_tab_type_current" in buns_tab.get_attribute("class")
+    def click_tab(self, driver, locator):
+        tab = driver.find_element(*locator)
+        driver.execute_script("arguments[0].scrollIntoView(true);", tab)
+        driver.execute_script("arguments[0].click();", tab)
+
+    def is_tab_active(self, driver, tab_locator):
+        parent_div = driver.find_element(*tab_locator).find_element("xpath", "./parent::div")
+        return "tab_tab_type_current" in parent_div.get_attribute("class")
+
+    def test_fillings_tab(self, driver):
+        self.open_page(driver)
+        self.click_tab(driver, ConstructorPageLocators.FILLINGS_TAB)
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(IngredientsLocators.FILLING_MEAT)
+        )
+        assert self.is_tab_active(driver, ConstructorPageLocators.FILLINGS_TAB), \
+
+    def test_sauces_tab(self, driver):
+        self.open_page(driver)
+        self.click_tab(driver, ConstructorPageLocators.SAUCES_TAB)
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(IngredientsLocators.SAUCE_SPICY_X)
+        )
+        assert self.is_tab_active(driver, ConstructorPageLocators.SAUCES_TAB), \
+
+    def test_buns_tab(self, driver):
+        self.open_page(driver)
+        self.click_tab(driver, ConstructorPageLocators.BUNS_TAB)
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(IngredientsLocators.BUN_R2D3)
+        )
+        assert self.is_tab_active(driver, ConstructorPageLocators.BUNS_TAB), \
