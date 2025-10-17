@@ -1,49 +1,79 @@
 import pytest
-from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from utils.generator import generate_email, generate_password
+from pages.locators import (
+    MainPageLocators,
+    RegistrationPageLocators,
+    LoginPageLocators,
+    PasswordRecoveryPageLocators,
+)
 from data.urls import BASE_URL
-from pages.registration_page import RegistrationPage
-from pages.login_page import LoginPage
-from pages.profile_page import ProfilePage
+
+
+TIMEOUT = 3  # единое время ожидания
+
+
+def wait_for(driver, locator):
+    """Ожидание видимости элемента"""
+    return WebDriverWait(driver, TIMEOUT).until(
+        EC.visibility_of_element_located(locator)
+    )
 
 
 @pytest.mark.usefixtures("driver")
 class TestRegistrationAndLogin:
+   
 
-    def test_successful_registration(self, driver, valid_user):
-        """Проверка успешной регистрации"""
-        page = RegistrationPage(driver)
-        page.open(BASE_URL)
-        page.register(valid_user["name"], valid_user["email"], valid_user["password"])
-        assert driver.find_element(By.XPATH, "//p[contains(text(), 'Личный кабинет')]")
+    def test_successful_registration(self, driver):
+        driver.get(BASE_URL)
+        wait_for(driver, MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
+        wait_for(driver, ("link text", "Зарегистрироваться")).click()
+        email = generate_email()
+        password = generate_password()
+        wait_for(driver, RegistrationPageLocators.NAME_FIELD).send_keys("Test User")
+        driver.find_element(*RegistrationPageLocators.EMAIL_FIELD).send_keys(email)
+        driver.find_element(*RegistrationPageLocators.PASSWORD_FIELD).send_keys(password)
+        driver.find_element(*RegistrationPageLocators.REGISTER_BUTTON).click()
+        wait_for(driver, LoginPageLocators.LOGIN_BUTTON)
+        driver.find_element(*LoginPageLocators.EMAIL_FIELD).send_keys(email)
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(password)
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
+        wait_for(driver, LoginPageLocators.ORDER_BUTTON)
+        assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
 
     def test_login_from_main_page(self, driver, valid_user):
-        """Проверка входа через кнопку 'Войти в аккаунт' на главной странице"""
         driver.get(BASE_URL)
-        driver.find_element(By.XPATH, "//button[text()='Войти в аккаунт']").click()
-        login_page = LoginPage(driver)
-        login_page.login(valid_user["email"], valid_user["password"])
-        assert driver.find_element(By.XPATH, "//p[contains(text(), 'Личный кабинет')]")
+        wait_for(driver, MainPageLocators.LOGIN_ACCOUNT_BUTTON).click()
+        wait_for(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
+        wait_for(driver, LoginPageLocators.ORDER_BUTTON)
+        assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
 
     def test_login_via_personal_account(self, driver, valid_user):
-        """Проверка входа через кнопку 'Личный кабинет'"""
         driver.get(BASE_URL)
-        driver.find_element(By.XPATH, "//p[text()='Личный Кабинет']").click()
-        login_page = LoginPage(driver)
-        login_page.login(valid_user["email"], valid_user["password"])
-        assert driver.find_element(By.XPATH, "//p[contains(text(), 'Личный кабинет')]")
+        wait_for(driver, MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
+        wait_for(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
+        wait_for(driver, LoginPageLocators.ORDER_BUTTON)
+        assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
 
     def test_login_from_registration_page(self, driver, valid_user):
-        """Проверка входа через ссылку 'Войти' со страницы регистрации"""
         driver.get(BASE_URL + "register")
-        driver.find_element(By.XPATH, "//a[text()='Войти']").click()
-        login_page = LoginPage(driver)
-        login_page.login(valid_user["email"], valid_user["password"])
-        assert driver.find_element(By.XPATH, "//p[contains(text(), 'Личный кабинет')]")
+        wait_for(driver, RegistrationPageLocators.LOGIN_BUTTON_ON_REG_FORM).click()
+        wait_for(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
+        wait_for(driver, LoginPageLocators.ORDER_BUTTON)
+        assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()
 
     def test_login_from_password_recovery_page(self, driver, valid_user):
-        """Проверка входа через ссылку 'Войти' со страницы восстановления пароля"""
         driver.get(BASE_URL + "forgot-password")
-        driver.find_element(By.XPATH, "//a[text()='Войти']").click()
-        login_page = LoginPage(driver)
-        login_page.login(valid_user["email"], valid_user["password"])
-        assert driver.find_element(By.XPATH, "//p[contains(text(), 'Личный кабинет')]")
+        wait_for(driver, PasswordRecoveryPageLocators.LOGIN_BUTTON_ON_RECOVER_FORM).click()
+        wait_for(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
+        driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
+        driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
+        wait_for(driver, LoginPageLocators.ORDER_BUTTON)
+        assert driver.find_element(*LoginPageLocators.ORDER_BUTTON).is_displayed()

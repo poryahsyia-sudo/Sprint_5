@@ -12,7 +12,7 @@ class TestInvalidPassword:
         login_page = LoginPage(driver)
         login_page.open(BASE_URL + "login")
         login_page.login(invalid_password["email"], invalid_password["password"])
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 3).until(
             EC.visibility_of_element_located(LoginPageLocators.LOGIN_BUTTON)
         )
         # Проверка только в assert

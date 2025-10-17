@@ -12,7 +12,7 @@ from data.urls import BASE_URL
 @pytest.mark.usefixtures("driver", "valid_user")
 class TestLoginFlow:
     def wait(self, driver, locator):
-        return WebDriverWait(driver, 10).until(
+        return WebDriverWait(driver, 3).until(
             EC.visibility_of_element_located(locator)
         )
 
@@ -55,5 +55,5 @@ class TestLoginFlow:
         driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
         self.wait(driver, AccountPageLocators.PROFILE_BUTTON)
         driver.find_element(*AccountPageLocators.LOGOUT_BUTTON).click()
-        WebDriverWait(driver, 10).until(EC.url_contains("login"))
+        WebDriverWait(driver, 3).until(EC.url_contains("login"))
         assert "login" in driver.current_url
