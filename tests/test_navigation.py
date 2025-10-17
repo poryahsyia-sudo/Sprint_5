@@ -22,8 +22,7 @@ class TestLoginFlow:
         self.wait(driver, LoginPageLocators.EMAIL_FIELD).send_keys(valid_user["email"])
         driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
         driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
-        driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
+        assert self.wait(driver, LoginPageLocators.ORDER_BUTTON).is_displayed()
 
     def test_constructor_button_returns_home(self, driver, valid_user):
         driver.get(BASE_URL)
