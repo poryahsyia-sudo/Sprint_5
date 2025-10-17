@@ -1,7 +1,9 @@
-from pages.base_page import BasePage
 from pages.locators import ProfilePageLocators
 
+class ProfilePage:
+    def __init__(self, driver):
+        self.driver = driver
 
-class ProfilePage(BasePage):
     def logout(self):
-        self.click(self.driver.find_element(*ProfilePageLocators.LOGOUT_BUTTON))
+        self.driver.find_element(*ProfilePageLocators.LOGOUT_BUTTON).click()
+
