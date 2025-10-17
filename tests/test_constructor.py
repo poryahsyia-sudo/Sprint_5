@@ -10,7 +10,7 @@ class TestConstructorTabs:
 
     def test_fillings_tab(self, driver):
         driver.get(BASE_URL)
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 3).until(
             EC.visibility_of_element_located(ConstructorPageLocators.BUNS_TAB)
         )
         # Переход на вкладку "Начинки"
@@ -26,7 +26,7 @@ class TestConstructorTabs:
 
     def test_sauces_tab(self, driver):
         driver.get(BASE_URL)
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 3).until(
             EC.visibility_of_element_located(ConstructorPageLocators.BUNS_TAB)
         )
         # Переход на вкладку "Начинки", чтобы уйти с "Булок"
@@ -43,7 +43,7 @@ class TestConstructorTabs:
 
     def test_buns_tab(self, driver):
         driver.get(BASE_URL)
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 3).until(
             EC.visibility_of_element_located(ConstructorPageLocators.BUNS_TAB)
         )
         # Уходим с вкладки "Булки"
