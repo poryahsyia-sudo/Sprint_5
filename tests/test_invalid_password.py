@@ -15,4 +15,5 @@ class TestInvalidPassword:
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located(LoginPageLocators.LOGIN_BUTTON)
         )
+        # Проверка только в assert
         assert driver.find_element(*LoginPageLocators.LOGIN_BUTTON).is_displayed()

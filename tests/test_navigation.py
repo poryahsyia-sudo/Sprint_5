@@ -7,7 +7,6 @@ from pages.locators import (
     AccountPageLocators,
 )
 from data.urls import BASE_URL
-from utils.generator import generate_email, generate_password
 
 
 @pytest.mark.usefixtures("driver", "valid_user")
@@ -33,7 +32,7 @@ class TestLoginFlow:
         driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
         driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
         driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
+        self.wait(driver, AccountPageLocators.PROFILE_BUTTON)
         driver.find_element(*MainPageLocators.CONSTRUCTOR_BUTTON).click()
         assert self.wait(driver, LoginPageLocators.ORDER_BUTTON).is_displayed()
 
@@ -44,7 +43,7 @@ class TestLoginFlow:
         driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
         driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
         driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
+        self.wait(driver, AccountPageLocators.PROFILE_BUTTON)
         driver.find_element(*MainPageLocators.LOGO_BUTTON).click()
         assert self.wait(driver, LoginPageLocators.ORDER_BUTTON).is_displayed()
 
@@ -55,7 +54,7 @@ class TestLoginFlow:
         driver.find_element(*LoginPageLocators.PASSWORD_FIELD).send_keys(valid_user["password"])
         driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
         driver.find_element(*MainPageLocators.PERSONAL_ACCOUNT_BUTTON).click()
-        assert self.wait(driver, AccountPageLocators.PROFILE_BUTTON).is_displayed()
+        self.wait(driver, AccountPageLocators.PROFILE_BUTTON)
         driver.find_element(*AccountPageLocators.LOGOUT_BUTTON).click()
         WebDriverWait(driver, 10).until(EC.url_contains("login"))
         assert "login" in driver.current_url
